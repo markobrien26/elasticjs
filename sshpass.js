@@ -5,8 +5,7 @@ var client = require('./connection.js');
 client.search({  
   index: 'logstash-2017.03.07',
   type: 'syslog',
-  fields: ["src_ip"],
-  size: 20,
+  size: 1,
   body: {
     query: {
       bool: {
@@ -33,17 +32,18 @@ client.search({
       console.log("--- Hits ---");
       response.hits.hits.forEach(function(hit){
 	var options = { method: 'POST',
-	  url: 'http://localhost:3000/tasks',
+	  url: 'http://localhost:3000/alerts',
 	  headers:
 	     {'content-type': 'application/x-www-form-urlencoded' },
-	  form: { src_ip: hit.fields.src_ip } };
+	  form: { type: 'ssh', src_ip: hit._source.src_ip, city: hit._source.geoip.city_name }
+ };
 	request(options, function (error, response, body) {
 	  if (error) throw new Error(error);
 
-	  console.log(body);
+	  console.log("success");
 	});
 
-        console.log(hit.fields.src_ip);
+       
       })
     }
 });
