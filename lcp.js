@@ -4,17 +4,21 @@ var client = require('./connection.js');
 
 client.search({  
   index: 'logstash-2017.03.07',
-  type: 'syslog',
-  size: 1,
   body: {
     query: {
       bool: {
 	must: [
-          { match: { "tags": "ssh_brute_force_attack" } },
+          { match: { "type_instance": "lcp_water_out"  } },
           { range : {
 		"@timestamp" : {
-                "gte": "2017-03-07T17:26:58.000Z", 
-                "lte": "2017-03-07T18:26:58.000Z",
+                "gte": "2017-03-07T01:00:58.000Z", 
+                "lte": "2017-03-07T19:00:58.000Z",
+		}
+	     }
+	  },
+	  { range: {
+		"value" : {
+		"gte": "25",
 		}
 	     }
 	  }
@@ -37,12 +41,12 @@ function (error, response,status) {
 	  url: 'http://localhost:3000/alerts',
 	  headers:
 	     {'content-type': 'application/x-www-form-urlencoded' },
-	  form: { type: 'ssh', src_ip: hit._source.src_ip, city: hit._source.geoip.city_name, country: hit._source.geoip.country_name }
- };
+	  form: { type: 'LCP', host: hit._source.host, temperature: hit._source.value }
+   };
 	request(options, function (error, response, body) {
 	  if (error) throw new Error(error);
 
-	  console.log("success");
+	  console.log(hit);
 	});
 
        
