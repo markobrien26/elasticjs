@@ -2,10 +2,11 @@ var request = require("request");
 
 var client = require('./connection.js');
 
+var ip = [];
+
 client.search({  
   index: 'logstash-2017.03.07',
   type: 'syslog',
-  size: 1,
   body: {
     query: {
       bool: {
@@ -33,6 +34,8 @@ function (error, response,status) {
       console.log('Total hits: ',response.hits.total);
       console.log("--- Hits ---");
       response.hits.hits.forEach(function(hit){
+      if (!(ip.includes(hit._source.src_ip))){
+	ip.push(hit._source.src_ip);
 	var options = { method: 'POST',
 	  url: 'http://localhost:3000/alerts',
 	  headers:
@@ -42,10 +45,10 @@ function (error, response,status) {
 	request(options, function (error, response, body) {
 	  if (error) throw new Error(error);
 
-	  console.log("success");
+	  console.log(hit._source.src_ip);
 	});
-
-       
+	
+       }
       })
     }
 });

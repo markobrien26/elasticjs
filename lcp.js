@@ -2,6 +2,8 @@ var request = require("request");
 
 var client = require('./connection.js');
 
+var hosts = [];
+
 client.search({  
   index: 'logstash-2017.03.07',
   body: {
@@ -37,6 +39,8 @@ function (error, response,status) {
       console.log('Total hits: ',response.hits.total);
       console.log("--- Hits ---");
       response.hits.hits.forEach(function(hit){
+      if (!(hosts.includes(hit._source.host))){
+	hosts.push(hit._source.host);
 	var options = { method: 'POST',
 	  url: 'http://localhost:3000/alerts',
 	  headers:
@@ -46,10 +50,10 @@ function (error, response,status) {
 	request(options, function (error, response, body) {
 	  if (error) throw new Error(error);
 
-	  console.log(hit);
+	  console.log(hosts);
 	});
 
-       
+       }
       })
     }
 });
