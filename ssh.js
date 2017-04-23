@@ -12,13 +12,13 @@ client.search({
       bool: {
 	must: [
           { match: { "tags": "ssh_brute_force_attack" } },
-          { range : {
-		"@timestamp" : {
-                "gte": "2017-03-07T17:26:58.000Z", 
-                "lte": "2017-03-07T18:26:58.000Z",
-		}
-	     }
-	  }
+//          { range : {
+//		"@timestamp" : {
+//                "gte": "2017-03-07T17:26:58.000Z", 
+//                "lte": "2017-03-07T18:26:58.000Z",
+//		}
+//	     }
+//	  }
 	] 
     }
   }
@@ -40,7 +40,7 @@ function (error, response,status) {
 	  url: 'http://localhost:3000/alerts',
 	  headers:
 	     {'content-type': 'application/x-www-form-urlencoded' },
-	  form: { type: 'ssh', src_ip: hit._source.src_ip, city: hit._source.geoip.city_name, country: hit._source.geoip.country_name }
+	  form: { type: 'SSH', src_ip: hit._source.src_ip, city: hit._source.geoip.city_name, country: hit._source.geoip.country_name }
  };
 	request(options, function (error, response, body) {
 	  if (error) throw new Error(error);
